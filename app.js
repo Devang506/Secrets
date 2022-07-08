@@ -1,10 +1,11 @@
 
-
+require('dotenv').config();
+var encrypt = require("mongoose-encryption");
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-var encrypt = require("mongoose-encryption");
+
 
 let alert = require('alert');
 
@@ -23,9 +24,9 @@ const userSchema = new mongoose.Schema({
   password: String
 });
 
-const secret = "Thisisourlittlesecret";
+
 // only  encrypting certain fields
-userSchema.plugin(encrypt, { secret: secret ,encryptedFields:["password"]});
+userSchema.plugin(encrypt, { secret:process.env.SECRET ,encryptedFields:["password"]});
 
 
 const User = new mongoose.model("User",userSchema);
