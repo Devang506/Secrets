@@ -1,11 +1,12 @@
 
 require('dotenv').config();
-var encrypt = require("mongoose-encryption");
+// var encrypt = require("mongoose-encryption");
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-
+ const md5 = require("md5"); level 3
+// const bcrypt = require('bcrypt'); // level 4
 
 let alert = require('alert');
 
@@ -25,8 +26,8 @@ const userSchema = new mongoose.Schema({
 });
 
 
-// only  encrypting certain fields
-userSchema.plugin(encrypt, { secret:process.env.SECRET ,encryptedFields:["password"]});
+// only  encrypting certain fields (Level-2 Security)
+// userSchema.plugin(encrypt, { secret:process.env.SECRET ,encryptedFields:["password"]});
 
 
 const User = new mongoose.model("User",userSchema);
@@ -48,7 +49,7 @@ app.post("/register", function(req,res){
   const password = req.body.password;
   const newUser = new User({
     email : username,
-    password : password
+    password : md5(password)
   })
   User.findOne({email:username}, function(err,foundUser){
     if(err){
@@ -74,7 +75,7 @@ app.post("/register", function(req,res){
 })
 app.post("/login", function(req,res){
   const username = req.body.username;
-  const password = req.body.password;
+  const password = md5(req.body.password);
   User.findOne({email:username}, function(err,foundUser){
     if(err){
       console.log(err);
